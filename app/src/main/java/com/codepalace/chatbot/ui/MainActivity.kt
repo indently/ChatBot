@@ -1,16 +1,20 @@
-package com.codepalace.chatbot
+package com.codepalace.chatbot.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.codepalace.chatbot.Constants.RECEIVE_ID
-import com.codepalace.chatbot.Constants.SEND_ID
+import com.codepalace.chatbot.R
+import com.codepalace.chatbot.data.Message
+import com.codepalace.chatbot.utils.Constants.RECEIVE_ID
+import com.codepalace.chatbot.utils.Constants.SEND_ID
+import com.codepalace.chatbot.utils.BotResponse
+import com.codepalace.chatbot.utils.Time
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val messagesList = mutableListOf<Message>()
+    var messagesList = mutableListOf<Message>()
     private lateinit var adapter: MessagingAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,7 +25,6 @@ class MainActivity : AppCompatActivity() {
         rv_messages.adapter = adapter
         rv_messages.layoutManager = LinearLayoutManager(applicationContext)
 
-
         btn_send.setOnClickListener {
             sendMessage()
         }
@@ -29,19 +32,22 @@ class MainActivity : AppCompatActivity() {
 
     private fun sendMessage() {
         val message = et_message.text.toString()
+        val timeStamp = Time.timeStamp()
 
         if (message.isNotEmpty()) {
-            messagesList.add(Message(message, SEND_ID))
+            //Adds it to our local list
+            messagesList.add(Message(message, SEND_ID, timeStamp))
             et_message.setText("")
 
-            adapter.insertMessage(Message(message, SEND_ID))
-            rv_messages.scrollToPosition(messagesList.size - 1)
+            adapter.insertMessage(Message(message, SEND_ID, timeStamp))
+            rv_messages.scrollToPosition(adapter.itemCount - 1)
 
             botResponse(message)
         }
     }
 
     private fun botResponse(message: String) {
+        val timeStamp = Time.timeStamp()
 
         GlobalScope.launch {
             //Fake response delay
@@ -50,13 +56,15 @@ class MainActivity : AppCompatActivity() {
             withContext(Dispatchers.Main) {
                 //Gets the response
                 val response = BotResponse.responses(message)
-                //Adds it to our local list
-                messagesList.add(Message(response, RECEIVE_ID))
-                //Inserts our message into the adapter
-                adapter.insertMessage(Message(response, RECEIVE_ID))
-                //Scrolls us to the position of the latest message
-                rv_messages.scrollToPosition(messagesList.size - 1)
 
+                //Adds it to our local list
+                messagesList.add(Message(response, RECEIVE_ID, timeStamp))
+
+                //Inserts our message into the adapter
+                adapter.insertMessage(Message(response, RECEIVE_ID, timeStamp))
+
+                //Scrolls us to the position of the latest message
+                rv_messages.scrollToPosition(adapter.itemCount - 1)
             }
         }
     }

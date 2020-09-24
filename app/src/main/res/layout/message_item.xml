@@ -10,11 +10,11 @@
         android:layout_alignParentEnd="true"
         android:layout_margin="4dp"
         android:background="@drawable/round_button"
-        android:backgroundTint="#42A5F5"
+        android:backgroundTint="#26A69A"
         android:padding="14dp"
         android:text="This is a sample message that will appear"
         android:textColor="@android:color/white"
-        android:textSize="18sp" />
+        android:textSize="14sp" />
 
     <TextView
         android:visibility="gone"
@@ -28,6 +28,7 @@
         android:padding="14dp"
         android:text="This is a sample message that will appear"
         android:textColor="@android:color/white"
-        android:textSize="18sp" />
+        android:textSize="14sp" />
+
 
 </RelativeLayout>
