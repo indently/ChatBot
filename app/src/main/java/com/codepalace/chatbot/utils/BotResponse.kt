@@ -1,12 +1,9 @@
 package com.codepalace.chatbot.utils
 
-import android.content.Intent
-import android.net.Uri
 import com.codepalace.chatbot.utils.Constants.OPEN_GOOGLE
 import java.sql.Date
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
-import kotlin.math.log
 
 object BotResponse {
 

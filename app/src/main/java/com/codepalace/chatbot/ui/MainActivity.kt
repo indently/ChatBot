@@ -16,30 +16,61 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
+    private val TAG = "MainActivity"
 
     var messagesList = mutableListOf<Message>()
     private lateinit var adapter: MessagingAdapter
+    private val botList = listOf("Peter", "Francesca", "Luigi", "Igor")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        adapter = MessagingAdapter()
-        rv_messages.adapter = adapter
-        rv_messages.layoutManager = LinearLayoutManager(applicationContext)
+        recyclerView()
 
+        tapComponents()
 
+        val random =  (0..3).random()
+
+        customBotMessage("Hello! Today you're speaking with ${botList[random]}, how may I help?")
+    }
+
+    private fun tapComponents() {
+
+        //Send a message
         btn_send.setOnClickListener {
             sendMessage()
         }
 
-        customBotMessage("Hello! Today you're speaking with Peter, how may I help?")
+        //Scroll back to correct position when user clicks on text view
+        et_message.setOnClickListener {
+            GlobalScope.launch {
+                delay(100)
+
+                withContext(Dispatchers.Main){
+                    rv_messages.scrollToPosition(adapter.itemCount - 1)
+
+                }
+            }
+        }
+    }
+
+    private fun recyclerView() {
+        adapter = MessagingAdapter()
+        rv_messages.adapter = adapter
+        rv_messages.layoutManager = LinearLayoutManager(applicationContext)
+
     }
 
     override fun onStart() {
         super.onStart()
         //In case there are messages, scroll to bottom when re-opening app
-        rv_messages.scrollToPosition(adapter.itemCount - 1)
+        GlobalScope.launch {
+            delay(100)
+            withContext(Dispatchers.Main){
+                rv_messages.scrollToPosition(adapter.itemCount - 1)
+            }
+        }
     }
 
     private fun sendMessage() {
