@@ -13,6 +13,5 @@ object Time {
         val time = sdf.format(Date(timeStamp.time))
 
         return time.toString()
-
     }
 }

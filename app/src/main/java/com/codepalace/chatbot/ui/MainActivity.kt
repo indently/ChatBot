@@ -11,6 +11,7 @@ import com.codepalace.chatbot.utils.Constants.RECEIVE_ID
 import com.codepalace.chatbot.utils.Constants.SEND_ID
 import com.codepalace.chatbot.utils.BotResponse
 import com.codepalace.chatbot.utils.Constants.OPEN_GOOGLE
+import com.codepalace.chatbot.utils.Constants.OPEN_SEARCH
 import com.codepalace.chatbot.utils.Time
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
@@ -28,14 +29,13 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView()
 
-        tapComponents()
+        clickEvents()
 
-        val random =  (0..3).random()
-
+        val random = (0..3).random()
         customBotMessage("Hello! Today you're speaking with ${botList[random]}, how may I help?")
     }
 
-    private fun tapComponents() {
+    private fun clickEvents() {
 
         //Send a message
         btn_send.setOnClickListener {
@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
             GlobalScope.launch {
                 delay(100)
 
-                withContext(Dispatchers.Main){
+                withContext(Dispatchers.Main) {
                     rv_messages.scrollToPosition(adapter.itemCount - 1)
 
                 }
@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         //In case there are messages, scroll to bottom when re-opening app
         GlobalScope.launch {
             delay(100)
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 rv_messages.scrollToPosition(adapter.itemCount - 1)
             }
         }
@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
 
             withContext(Dispatchers.Main) {
                 //Gets the response
-                val response = BotResponse.responses(message)
+                val response = BotResponse.basicResponses(message)
 
                 //Adds it to our local list
                 messagesList.add(Message(response, RECEIVE_ID, timeStamp))
@@ -109,11 +109,19 @@ class MainActivity : AppCompatActivity() {
                 //Scrolls us to the position of the latest message
                 rv_messages.scrollToPosition(adapter.itemCount - 1)
 
-                //Stars Google
-                if (response == OPEN_GOOGLE) {
-                    val site = Intent(Intent.ACTION_VIEW)
-                    site.data = Uri.parse("https://www.google.com/")
-                    startActivity(site)
+                //Starts Google
+                when (response) {
+                    OPEN_GOOGLE -> {
+                        val site = Intent(Intent.ACTION_VIEW)
+                        site.data = Uri.parse("https://www.google.com/")
+                        startActivity(site)
+                    }
+                    OPEN_SEARCH -> {
+                        val site = Intent(Intent.ACTION_VIEW)
+                        val searchTerm: String? = message.substringAfterLast("search")
+                        site.data = Uri.parse("https://www.google.com/search?&q=$searchTerm")
+                        startActivity(site)
+                    }
 
                 }
             }
