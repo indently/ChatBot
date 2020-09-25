@@ -15,6 +15,14 @@ object BotResponse {
 
         return when {
 
+            //Flips a coin
+            message.contains("flip") && message.contains("coin") -> {
+                val r = (0..1).random()
+                val result = if (r == 0) "heads" else "tails"
+
+                "I flipped a coin and it landed on $result"
+            }
+
             //Math calculations
             message.contains("solve") -> {
                 val equation: String? = message.substringAfterLast("solve")
